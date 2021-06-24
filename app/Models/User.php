@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -39,9 +40,9 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        // 'notes' => 'array',
-        // 'details' => 'json',
-        // 'ssn' => 'encrypted',
+        'notes' => AsArrayObject::class,
+        'details' => 'json',
+        'ssn' => 'encrypted',
     ];
 
     public function ideas()
@@ -54,12 +55,12 @@ class User extends Authenticatable
         return $this->hasOne(Idea::class)->latest();
     }
 
-    public function scopeActive($query)
+    public function scopeGood($query)
     {
         return $query->where('status', 'active');
     }
 
-    public function scopeInactive($query)
+    public function scopeBad($query)
     {
         return $query->where('status', 'inactive');
     }

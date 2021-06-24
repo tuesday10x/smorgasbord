@@ -31,39 +31,22 @@ class UserController extends Controller
         return view('create');
     }
 
-    public function store()
+    public function store(Request $request)
     {
         // 1st yuck
-        $req = request();
+        // $request = request();
 
-        request()->validate([
+        $request->validate([
             'name' => 'required',
             'email' => 'required',
         ]);
 
         $user = User::create([
-            'name' => request()->name,
-            'email' => request()->email,
+            'name' => $request->name,
+            'email' => $request->email,
             'password' => Hash::make(Str::random(40)),
         ]);
 
         return $user;
-
-
-
-
-        // oh baby
-        // $request->validate([
-        //     'name' => 'required',
-        //     'email' => 'required',
-        // ]);
-
-        // $user = User::create([
-        //     'name' => $request->name,
-        //     'email' => $request->email,
-        //     'password' => Hash::make(Str::random(40)),
-        // ]);
-
-        // return $user;
     }
 }

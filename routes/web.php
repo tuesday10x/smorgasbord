@@ -16,13 +16,14 @@ use App\Http\Controllers\UserController;
 |
 */
 
+// Route Parameters
+// Route::get('/user/{id}', [UserController::class, 'show']);
 
 // Route Model Binding
-Route::get('/user/{id}', [UserController::class, 'show']);
-// Route::get('/user/{user}', [UserController::class, 'fancyShow']);
+Route::get('/user/{user}', [UserController::class, 'fancyShow']);
 // Route::get('/user/{snowflake}', [UserController::class, 'weirdShow']);
 
-
+// Route::post('user/{user}', [UserController::class, 'update']);
 
 
 
@@ -35,11 +36,11 @@ Route::get('/allUsers', function(){
 });
 
 Route::get('/activeUsers', function(){
-    return User::active()->get();
+    return User::good()->get()
 });
 
 Route::get('/inactiveUsers', function(){
-    return User::inactive()->get();
+    return User::bad()->get();
 });
 
 Route::get('/statusUsers', function(){
@@ -121,36 +122,15 @@ Route::get('ssnCast', function(){
     return $user;
 });
 
-
-
-
-
-
-
-
-
-
-// Query Builder vs Collections && Eager Loading
-Route::get('builder', function(){
+Route::get('implicitArrays', function(){
+    // casted notes as AsArrayObject::class
     $user = User::first();
 
-    dump(
-        $user->ideas->where('votes', '>', 25)
-    );
+    $user->notes['date'] = now();
 
-    // dump(
-    //     $user->ideas()->where('votes', '>', 25)->get()
-    // );
+    $user->save();
 
-
-
-    // dump(
-    //     $user->ideas->where('votes', '>', 25)->count()
-    // );
-
-    // dump(
-    //     $user->ideas()->where('votes', '>', 25)->count()
-    // );
+    return $user;
 });
 
 
@@ -159,9 +139,44 @@ Route::get('builder', function(){
 
 
 
-// Query Log
+
+
+
+// Query Builder vs Collections
+Route::get('builder', function(){
+    $user = User::first();
+
+    // Collection
+    dump(
+        $user->ideas->where('votes', '>', 25)
+    );
+
+    // Query Builder
+    // dump(
+    //     $user->ideas()->where('votes', '>', 25)->first()->voters()->count()
+    // );
+
+
+    // Collection
+    // dump(
+    //     $user->ideas->where('votes', '>', 25)->count()
+    // );
+
+    // Query Builder
+    dump(
+        $user->ideas()->where('votes', '>', 25)->count()
+    );
+});
+
+
+
+
+
+
+
+// Query Log && Eager Loading
 Route::get('queryLog', function(){
-    DB::enableQueryLog();
+    // DB::enableQueryLog();
 
     $user = User::first();
     // $user = User::with('ideas.voters')->first();
@@ -172,7 +187,9 @@ Route::get('queryLog', function(){
         }
     }
 
-    dump(DB::getQueryLog());
+    echo 'done';
+
+    // dump(DB::getQueryLog());
 });
 
 
